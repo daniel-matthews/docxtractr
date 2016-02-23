@@ -28,14 +28,37 @@ docx_extract_tbl <- function(docx, tbl_number=1, header=TRUE, trim=TRUE) {
   cells <- xml_find_all(tbl, "./w:tr/w:tc", ns=ns)
   rows <- xml_find_all(tbl, "./w:tr", ns=ns)
 
+ # bind_rows(lapply(rows, function(row) {
+#
+ #   vals <- xml_text(xml_find_all(row, "./w:tc", ns=ns), trim=trim)
+  #  names(vals) <- sprintf("V%d", 1:length(vals))
+   # data.frame(as.list(vals), stringsAsFactors=FALSE)
+#
+ # })) -> dat
+ 
   bind_rows(lapply(rows, function(row) {
-
-    vals <- xml_text(xml_find_all(row, "./w:tc", ns=ns), trim=trim)
+    vals <- xml_text(xml_find_all(row, "./w:tc", ns=ns), trim=FALSE)
     names(vals) <- sprintf("V%d", 1:length(vals))
-    data.frame(as.list(vals), stringsAsFactors=FALSE)
-
+    vals <- as.list(vals)
+    #redo column 5 to get formatting
+    columns <-  xml_find_all(row, "./w:tc", ns=ns)
+    paragraphs <-  xml_find_all(columns[5], "./w:p", ns=ns) 
+    
+    textout <-""
+    
+    #loop through the paragraphs
+    for(i in 1:length(paragraphs)){
+      #is it a bullet point?
+      if(grepl("<w:numPr>", as.character(paragraphs[i])))  textout<- paste(textout,"-", as.character(xml_text(paragraphs[i])), sep="")
+      #is it bold
+      else if(grepl("w:b/", as.character(paragraphs[i]))) textout<- paste(textout,"**", as.character(xml_text(paragraphs[i])),"**", sep="")
+      else textout<- paste(textout, as.character(xml_text(paragraphs[i])), sep="")
+    }
+    vals[5] <- textout
+   data.frame(vals, stringsAsFactors=FALSE)
+   
   })) -> dat
-
+  
   if (header) {
     colnames(dat) <- dat[1,]
     dat <- dat[-1,]
