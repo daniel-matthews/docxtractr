@@ -49,7 +49,7 @@ docx_extract_tbl <- function(docx, tbl_number=1, header=TRUE, trim=TRUE) {
     #loop through the paragraphs
     for(i in 1:length(paragraphs)){
       #is it a bullet point?
-      if(grepl("<w:numPr>", as.character(paragraphs[i])))  textout<- paste(textout,"*", as.character(xml_text(paragraphs[i])), sep="")
+      if(grepl("<w:numPr>", as.character(paragraphs[i])))  textout<- paste(textout,"* ", as.character(xml_text(paragraphs[i])), sep="")
       #is it bold
       else if(grepl("w:b/", as.character(paragraphs[i]))) textout<- paste(textout,"**", as.character(xml_text(paragraphs[i])),"**", sep="")
       else textout<- paste(textout, as.character(xml_text(paragraphs[i])), sep="")
