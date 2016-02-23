@@ -55,7 +55,7 @@ docx_extract_tbl <- function(docx, tbl_number=1, header=TRUE, trim=TRUE) {
       else textout<- paste(textout, as.character(xml_text(paragraphs[i])), sep="")
       textout <- iconv(textout, "", "ASCII", "byte")
     textout <-gsub("<e2><80><99>", "'", textout)
-        textout <-gsub("<c2><a0>", "  \n", textout)
+        textout <-gsub("<c2><a0>", "  \n\n", textout)
     }
     vals[5] <- textout
    data.frame(vals, stringsAsFactors=FALSE)
