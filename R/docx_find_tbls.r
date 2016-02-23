@@ -53,6 +53,7 @@ docx_extract_tbl <- function(docx, tbl_number=1, header=TRUE, trim=TRUE) {
       #is it bold
       else if(grepl("w:b/", as.character(paragraphs[i]))) textout<- paste(textout,"**", as.character(xml_text(paragraphs[i])),"**", sep="")
       else textout<- paste(textout, as.character(xml_text(paragraphs[i])), sep="")
+      textout <- iconv(textout, "", "ASCII", "byte")
     }
     vals[5] <- textout
    data.frame(vals, stringsAsFactors=FALSE)
